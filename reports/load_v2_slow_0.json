@@ -1,0 +1,27 @@
+{
+  "target": "http://127.0.0.1:56761",
+  "concurrency": 20,
+  "total_requests": 300,
+  "duration_s": 2.95,
+  "rps": 101.65,
+  "error_rate": 0.0067,
+  "status_codes": {
+    "200": 298,
+    "503": 2
+  },
+  "latency_ms": {
+    "min": 154.7,
+    "avg": 191.7,
+    "p50": 193.3,
+    "p90": 216.6,
+    "p95": 219.9,
+    "p99": 228.0,
+    "max": 234.1
+  },
+  "total_cost_usd": 0.01045,
+  "slo": {
+    "p95_ms": 500,
+    "error_rate": 0.02,
+    "passed": true
+  }
+}

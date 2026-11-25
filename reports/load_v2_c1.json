@@ -1,0 +1,27 @@
+{
+  "target": "http://127.0.0.1:37345",
+  "concurrency": 1,
+  "total_requests": 300,
+  "duration_s": 68.63,
+  "rps": 4.37,
+  "error_rate": 0.0067,
+  "status_codes": {
+    "200": 298,
+    "503": 2
+  },
+  "latency_ms": {
+    "min": 155.2,
+    "avg": 229.5,
+    "p50": 188.6,
+    "p90": 216.4,
+    "p95": 220.5,
+    "p99": 1706.9,
+    "max": 1712.8
+  },
+  "total_cost_usd": 0.010131,
+  "slo": {
+    "p95_ms": 500,
+    "error_rate": 0.02,
+    "passed": true
+  }
+}

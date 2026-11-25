@@ -2,7 +2,7 @@
 
 ## URL public
 
-Bản đầu tiên [day14-agent ở Singapore](https://day14-agent-4xaq.onrender.com) chạy commit `1148a22`. Chờ URL public của `day14-agent-oregon` sau khi sync Blueprint mới.
+[day14-agent-oregon trên Render](https://day14-agent-oregon.onrender.com) — commit `29d43dd` báo **Live** trên Dashboard.
 
 ## Nền tảng
 
@@ -21,58 +21,54 @@ Sau khi web service mới được tạo, đặt `AGENT_API_KEY` trong **day14-a
 
 ## Kiểm tra URL public
 
-Chạy đoạn sau trong PowerShell khi web service đã deploy. Nhập URL và API key đã đặt trên Render khi được hỏi. Mỗi phép kiểm tra chỉ in mã HTTP.
+Chạy đoạn sau trong PowerShell khi web service đã deploy. Nhập API key đã đặt trên Render tại dấu nhắc ẩn. Ba lượt đầu in mã HTTP. Lượt có key in cả mã và nội dung phản hồi.
 
 ```powershell
-$base = (Read-Host 'Public URL').TrimEnd('/')
-$secureKey = Read-Host 'AGENT_API_KEY' -AsSecureString
+$base = 'https://day14-agent-oregon.onrender.com'
+
+curl.exe -q -sS --max-time 120 -o NUL -w 'GET /health          %{http_code}\n' "$base/health"
+curl.exe -q -sS --max-time 120 -o NUL -w 'GET /ready           %{http_code}\n' "$base/ready"
+
+'{"question":"Hello"}' | curl.exe -q -sS --max-time 120 -o NUL `
+  -w 'POST /ask thieu key  %{http_code}\n' `
+  -H 'Content-Type: application/json' --data-binary '@-' "$base/ask"
+
+$secureKey = Read-Host 'Nhap key cua service Oregon' -AsSecureString
 $agentKey = [System.Net.NetworkCredential]::new('', $secureKey).Password
 
-function Get-Day14HttpStatus {
-    param([string]$Method, [string]$Path, [hashtable]$Headers = @{})
-
-    $request = @{
-        Uri = "$base$Path"
-        Method = $Method
-        Headers = $Headers
-        UseBasicParsing = $true
-        ErrorAction = 'Stop'
-        TimeoutSec = 120
-    }
-    if ($Method -eq 'POST') {
-        $request.ContentType = 'application/json'
-        $request.Body = '{"question":"Hello"}'
-    }
-
-    try {
-        [int](Invoke-WebRequest @request).StatusCode
-    } catch {
-        if (-not $_.Exception.Response) { throw }
-        [int]$_.Exception.Response.StatusCode
-    }
-}
-
 try {
-    "GET /health                   $(Get-Day14HttpStatus GET /health)"
-    "GET /ready                    $(Get-Day14HttpStatus GET /ready)"
-    "POST /ask (thieu key)         $(Get-Day14HttpStatus POST /ask)"
-    "POST /ask (co key)            $(Get-Day14HttpStatus POST /ask @{ 'X-API-Key' = $agentKey })"
+    $response = Invoke-WebRequest -UseBasicParsing -ErrorAction Stop `
+        -Uri "$base/ask" -Method Post -TimeoutSec 120 `
+        -Headers @{ 'X-API-Key' = $agentKey } `
+        -ContentType 'application/json' -Body '{"question":"Hello"}'
+    "POST /ask co key     $($response.StatusCode)"
+    $response.Content
 } finally {
     Remove-Variable agentKey, secureKey
 }
 ```
 
-| Kiểm tra | HTTP mong đợi | HTTP thực tế của bản Singapore |
+| Kiểm tra | HTTP mong đợi | HTTP thực tế của bản Oregon |
 | --- | ---: | --- |
 | `GET /health` | 200 | `200` · `{"status":"ok"}` |
-| `GET /ready` | 200 | `503` · `{"ready":false}` |
+| `GET /ready` | 200 | `200` · `{"ready":true}` |
 | `POST /ask` thiếu key | 401 | `401` · `{"detail":"Missing or invalid API key"}` |
-| `POST /ask` có key | 200 | Chờ Redis sẵn sàng để kiểm tra từ máy học viên. |
+| `POST /ask` có key | 200 | `200` · JSON có `question` và `answer`. |
 
-Lần kiểm tra ngày 25/11/2026 xác nhận `/ready` trả `503`. Key Value `day14-deployment` hiển thị **Available** ở Oregon, còn web service ở Singapore. URL nội bộ yêu cầu cả hai cùng workspace và cùng region. Bốn bài kiểm tra sẽ được chạy lại trên URL của `day14-agent-oregon`. [Kết nối nội bộ trên Render](https://render.com/docs/key-value#connect-to-your-key-value-instance)
+Phản hồi thực tế cho `POST /ask` có key lúc 10:18:06 GMT ngày 25/11/2026:
+
+```http
+HTTP/1.1 200 OK
+Date: Wed, 25 Nov 2026 10:18:06 GMT
+Content-Type: application/json
+
+{"question":"Hello","answer":"Đây là câu trả lời từ AI agent (mock). Trong production, đây sẽ là response từ OpenAI/Anthropic."}
+```
+
+Ngày 25/11/2026, bản Singapore trả `503` cho `/ready` vì Key Value `day14-deployment` ở Oregon. Sau khi deploy web service cùng vùng với Key Value, `/ready` trên URL Oregon trả `200` với `{"ready":true}`. [Kết nối nội bộ trên Render](https://render.com/docs/key-value#connect-to-your-key-value-instance)
 
 ## Ảnh chụp
 
-- `screenshots/dashboard.png` ghi lại Dashboard có web service và Key Value.
-- `screenshots/running.png` ghi lại trạng thái deploy thành công của web service.
-- `screenshots/test.png` ghi lại bốn mã HTTP trong PowerShell.
+- [Dashboard Render](screenshots/dashboard.png) hiển thị web service `day14-agent-oregon` ở trạng thái **Deployed**.
+- [Lần deploy đang chạy](screenshots/running.png) xác nhận commit `29d43dd` ở trạng thái **Live**.
+- [Kết quả kiểm tra API](screenshots/test.png) ghi lại bốn mã HTTP `200 / 200 / 401 / 200` trong PowerShell.

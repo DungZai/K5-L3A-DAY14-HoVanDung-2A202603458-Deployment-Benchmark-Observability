@@ -1,0 +1,27 @@
+{
+  "target": "http://127.0.0.1:60213",
+  "concurrency": 20,
+  "total_requests": 300,
+  "duration_s": 6.43,
+  "rps": 46.64,
+  "error_rate": 0.01,
+  "status_codes": {
+    "200": 297,
+    "503": 3
+  },
+  "latency_ms": {
+    "min": 156.4,
+    "avg": 359.3,
+    "p50": 195.1,
+    "p90": 1663.0,
+    "p95": 1693.9,
+    "p99": 1719.8,
+    "max": 1732.6
+  },
+  "total_cost_usd": 0.010165,
+  "slo": {
+    "p95_ms": 500,
+    "error_rate": 0.02,
+    "passed": false
+  }
+}

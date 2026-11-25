@@ -1,0 +1,26 @@
+{
+  "target": "http://127.0.0.1:42563",
+  "concurrency": 20,
+  "total_requests": 300,
+  "duration_s": 4.15,
+  "rps": 72.33,
+  "error_rate": 0.0,
+  "status_codes": {
+    "200": 300
+  },
+  "latency_ms": {
+    "min": 153.1,
+    "avg": 250.2,
+    "p50": 192.6,
+    "p90": 218.3,
+    "p95": 223.0,
+    "p99": 1694.9,
+    "max": 1720.4
+  },
+  "total_cost_usd": 0.009922,
+  "slo": {
+    "p95_ms": 500,
+    "error_rate": 0.02,
+    "passed": true
+  }
+}
