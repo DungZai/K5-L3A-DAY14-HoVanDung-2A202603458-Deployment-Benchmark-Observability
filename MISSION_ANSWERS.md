@@ -171,15 +171,15 @@ Mã đối chiếu [Docker Compose](02-docker/production/docker-compose.yml) và
 
 ### Exercise 3.2 — Render
 
-Blueprint [render.yaml](06-lab-complete/render.yaml) khai báo web service dùng `Dockerfile` trong `06-lab-complete/` và một kho Key Value tương thích Redis cùng vùng Singapore. Web service nhận `REDIS_URL` qua tham chiếu nội bộ tới kho Key Value. `AGENT_API_KEY` được nhập trên Render Dashboard khi tạo Blueprint.
+Blueprint khai báo `day14-agent-oregon`, một web service dùng `Dockerfile` trong `06-lab-complete/`. `REDIS_URL` lấy URL nội bộ của Key Value `day14-deployment` qua `fromService`. Người deploy đặt `AGENT_API_KEY` trong Environment của web service. [render.yaml](06-lab-complete/render.yaml)
 
-URL public và kết quả bốn bài kiểm tra CP6 đang chờ lượt deploy. Xem [DEPLOYMENT.md](DEPLOYMENT.md).
+Bản Singapore báo **Live**. Kiểm tra public cho kết quả `/health` trả `200`, `/ready` trả `503` và `POST /ask` thiếu key trả `401`. Key Value đang **Available** ở Oregon. Bản Oregon cùng vùng với Key Value đang chờ deploy và chạy lại bốn bài kiểm tra CP6. [URL của bản Singapore](https://day14-agent-4xaq.onrender.com) · [DEPLOYMENT.md](DEPLOYMENT.md)
 
 ### Exercise 3.1 — So sánh cấu hình Railway và Render
 
 | Tiêu chí | Railway | Render |
 | --- | --- | --- |
-| Phạm vi | `railway.toml` mẫu mô tả cách build và chạy một service. Redis được tạo ở cấp project và liên kết qua biến môi trường. | `render.yaml` khai báo cả web service và Key Value trong một Blueprint. |
+| Phạm vi | `railway.toml` mẫu mô tả cách build và chạy một service. Redis được tạo ở cấp project và liên kết qua biến môi trường. | `render.yaml` khai báo web service và nhận URL của Key Value hiện có từ biến môi trường. |
 | Build và chạy | Ví dụ trong repo dùng Nixpacks và đặt `startCommand` chạy Uvicorn theo `$PORT`. | Blueprint của bài dùng `runtime: docker`, chỉ định Dockerfile và build context của Part 6, rồi dùng `CMD` từ Dockerfile. |
 | Health check | `healthcheckPath` trong `[deploy]` trỏ tới `/health`. | `healthCheckPath` đặt trên web service, cũng trỏ tới `/health`. |
 | Cấu hình và secret | Credential được cấp qua biến của service trên Railway. | `AGENT_API_KEY` dùng `sync: false` để nhập trên Dashboard, còn `REDIS_URL` dùng `fromService` để lấy URL nội bộ của Key Value. |

@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: day14-agent
+    name: day14-agent-oregon
     runtime: docker
     plan: free
-    region: singapore # Match the region of the existing Render Key Value instance.
+    region: oregon
     dockerfilePath: ./06-lab-complete/Dockerfile
     dockerContext: ./06-lab-complete
     healthCheckPath: /health
@@ -13,4 +13,7 @@ services:
       - key: AGENT_API_KEY
         sync: false
       - key: REDIS_URL
-        sync: false # Set to the existing Key Value instance's Internal URL in Render.
+        fromService:
+          type: keyvalue
+          name: day14-deployment
+          property: connectionString
