@@ -3,7 +3,7 @@ services:
     name: day14-agent
     runtime: docker
     plan: free
-    region: singapore
+    region: singapore # Match the region of the existing Render Key Value instance.
     dockerfilePath: ./06-lab-complete/Dockerfile
     dockerContext: ./06-lab-complete
     healthCheckPath: /health
@@ -13,14 +13,4 @@ services:
       - key: AGENT_API_KEY
         sync: false
       - key: REDIS_URL
-        fromService:
-          type: keyvalue
-          name: day14-redis
-          property: connectionString
-
-  - type: keyvalue
-    name: day14-redis
-    plan: free
-    region: singapore
-    ipAllowList: []
-    maxmemoryPolicy: noeviction
+        sync: false # Set to the existing Key Value instance's Internal URL in Render.

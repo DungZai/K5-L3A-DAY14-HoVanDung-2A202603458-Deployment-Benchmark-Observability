@@ -6,7 +6,7 @@ Chờ điền URL `onrender.com` sau khi deploy agent Part 6.
 
 ## Nền tảng
 
-Render. [Blueprint](06-lab-complete/render.yaml) khai báo Docker web service và Key Value tương thích Redis tại Singapore. Trên Render Dashboard, chọn **New → Blueprint**, kết nối branch chứa mã Part 6 và nhập `06-lab-complete/render.yaml` vào **Blueprint Path**. [Hướng dẫn Render Blueprints](https://render.com/docs/infrastructure-as-code)
+Render. Blueprint khai báo Docker web service và dùng lại Key Value miễn phí trong cùng workspace. Trước khi sync, đặt `region` của web service khớp với Key Value hiện có. Trên Render Dashboard, chọn **New → Blueprint**, kết nối branch chứa mã Part 6 và nhập `06-lab-complete/render.yaml` vào **Blueprint Path**. [Blueprint](06-lab-complete/render.yaml) · [Hướng dẫn Render Blueprints](https://render.com/docs/infrastructure-as-code)
 
 ## Biến môi trường
 
@@ -14,8 +14,10 @@ Render. [Blueprint](06-lab-complete/render.yaml) khai báo Docker web service v�
 | --- | --- |
 | `PORT` | Render cung cấp cho web service. Dockerfile dùng cổng này khi khởi động. |
 | `ENVIRONMENT` | Blueprint đặt `production`. |
-| `REDIS_URL` | Blueprint lấy URL nội bộ từ Key Value qua `fromService`. |
+| `REDIS_URL` | Lấy **Internal URL** từ mục **Connect** của Key Value hiện có và nhập trên Render Dashboard. |
 | `AGENT_API_KEY` | Người deploy nhập trên Render Dashboard. |
+
+Với Blueprint đã tạo, nếu lần sync tiếp theo không hỏi các giá trị trên, thêm biến còn thiếu trong **day14-agent → Environment** sau khi web service được tạo. [Kết nối Key Value](https://render.com/docs/key-value#connect-to-your-key-value-instance) · [Biến `sync: false`](https://render.com/docs/blueprint-spec#prompting-for-secret-values)
 
 ## Kiểm tra URL public
 
